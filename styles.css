@@ -1,0 +1,877 @@
+/* ============================================================================
+   styles.css — Diseño moderno para NBA Fantasy Hub  (único archivo de estilos)
+
+   Contenido:
+     1. Fuente (Inter, alojada en assets/fonts)
+     2. Variables de tema y colores
+     3. Base · cabecera · navegación · menús de idioma y tema
+     4. Componentes compartidos: controles, tablas, gráficos, pie
+     5. Responsive
+     6. Módulo Jugadores
+     7. Módulo Histórico NBA
+     8. Módulo Entrenadores
+
+   Reglas de uso:
+     · Los colores, radios y sombras salen de las variables de la sección 2.
+     · Texto con el color del esquema: usar var(--accent-text), NO --color-primary
+       (se ajusta al modo claro/oscuro para mantener el contraste).
+     · Cabecera, navegación, contenedores y filtros comparten el sistema visual de Filmoteca.
+     · Estilos de un módulo nuevo: añadir una sección al final de este archivo.
+   ============================================================================ */
+
+
+/* ── 1. Fuente ─────────────────────────────────────────────────────────────── */
+/* Inter variable (SIL OFL 1.1, ver assets/fonts/LICENSE-inter.txt). Se sirve
+   desde el propio proyecto: funciona con file://, sin internet y sin pedir nada
+   a Google. Dos subconjuntos con unicode-range; el navegador solo descarga el
+   que necesita (latin-ext cubre Dončić, Jokić, Porziņģis, Şengün…). */
+@font-face {
+    font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap;
+    src: url('assets/fonts/inter-latin-ext-wght-normal.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'Inter'; font-style: normal; font-weight: 100 900; font-display: swap;
+    src: url('assets/fonts/inter-latin-wght-normal.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ── 2. Variables de tema y colores ────────────────────────────────────────── */
+
+:root {
+    --bg-primary:        #f8fafc;
+    --bg-secondary:      #ffffff;
+    --bg-tertiary:       #f1f5f9;
+    --bg-row-even:       #f8fafc;
+    --text-primary:      #0f172a;
+    --text-secondary:    #64748b;
+    --border-color:      #e2e8f0;
+    --shadow-sm:         0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md:         0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg:         0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+
+    --color-primary:       #2563eb;
+    --color-primary-hover: #1d4ed8;
+    --color-primary-light: #3b82f6;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    --content-max: 1400px;
+
+    /* Derivados (no tocar al cambiar de tema) */
+    --accent-on-dark: #93c5fd;                 /* texto de acento sobre fondo oscuro */
+    --accent-text:    var(--color-primary-hover);
+    --focus-color:    var(--color-primary);
+    color-scheme: light;
+}
+
+[data-theme="dark"] {
+    --bg-primary:        #0f172a;
+    --bg-secondary:      #1e293b;
+    --bg-tertiary:       #334155;
+    --bg-row-even:       #182232;
+    --text-primary:      #f8fafc;
+    --text-secondary:    #94a3b8;
+    --border-color:      #334155;
+    --shadow-sm:         0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md:         0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg:         0 10px 15px -3px rgba(0, 0, 0, 0.5);
+
+    --accent-text:       var(--accent-on-dark);
+    --focus-color:       var(--color-primary-light);
+    color-scheme: dark;                        /* selects, scrollbars y casillas nativos en oscuro */
+}
+
+/* Esquemas de color (selector 🎨 de la cabecera; core.js pone data-color-scheme en <html>)
+   --accent-on-dark: tono claro para texto sobre fondo oscuro (contraste ≥ 4,5:1). */
+[data-color-scheme="blue"]   { --color-primary:#2563eb; --color-primary-hover:#1d4ed8; --color-primary-light:#60a5fa; --accent-on-dark:#93c5fd; }
+[data-color-scheme="green"]  { --color-primary:#16a34a; --color-primary-hover:#15803d; --color-primary-light:#4ade80; --accent-on-dark:#86efac; }
+[data-color-scheme="purple"] { --color-primary:#9333ea; --color-primary-hover:#7e22ce; --color-primary-light:#c084fc; --accent-on-dark:#d8b4fe; }
+[data-color-scheme="orange"] { --color-primary:#ea580c; --color-primary-hover:#c2410c; --color-primary-light:#fb923c; --accent-on-dark:#fdba74; }
+[data-color-scheme="red"]    { --color-primary:#dc2626; --color-primary-hover:#b91c1c; --color-primary-light:#f87171; --accent-on-dark:#fca5a5; }
+
+/* ── 3. Base ───────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Los controles no heredan la tipografía por defecto: forzarlo */
+button, input, select {
+    font-family: inherit;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.25s ease, color 0.25s ease;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Foco visible para quien navega con teclado (ratón y toque no lo muestran) */
+:focus-visible {
+    outline: 2px solid var(--focus-color);
+    outline-offset: 2px;
+}
+
+/* Oculto a la vista pero accesible con teclado (input[type=file] dentro de label) */
+.visually-hidden {
+    position: absolute;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0; border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* ── Cabecera ──────────────────────────────────────────────────────────────── */
+
+header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    position: sticky;          /* ocupa su sitio en el flujo: no hace falta una altura fija */
+    top: 0;
+    z-index: 100;
+}
+
+.header-wrapper {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Navegación de módulos ─────────────────────────────────────────────────── */
+
+.module-nav {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.module-nav-inner {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.module-tab {
+    padding: 12px 18px;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.module-tab:hover {
+    color: var(--text-primary);
+}
+
+.module-tab.active {
+    color: var(--accent-text);
+    border-bottom-color: var(--color-primary);
+}
+
+/* ── Contenedor principal de módulos ─────────────────────────────────────── */
+
+.module-container {
+    max-width: var(--content-max);
+    margin: 24px auto 40px;
+    padding: 28px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+}
+
+.module-title {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.35em;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Selector de Idioma ────────────────────────────────────────────────────── */
+
+.language-selector {
+    position: relative;
+}
+
+.lang-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 6px 10px;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.lang-button:hover {
+    border-color: var(--color-primary);
+}
+
+.lang-option-inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.flag-svg {
+    width: 24px;
+    height: 16px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+    display: block;
+}
+
+.lang-code {
+    font-weight: 700;
+    font-size: 0.85em;
+    letter-spacing: 0.5px;
+}
+
+.lang-chevron {
+    font-size: 0.75em;
+    opacity: 0.7;
+    margin-left: 2px;
+}
+
+.lang-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 6px;
+    min-width: 175px;
+    z-index: 1000;
+}
+
+.lang-menu.hidden {
+    display: none;
+}
+
+.lang-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: background 0.15s ease;
+}
+
+.lang-option:hover,
+.lang-option.active {
+    background: var(--bg-tertiary);
+}
+
+.lang-name {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    text-align: right;
+}
+
+/* ── Selector de Tema y Color ─────────────────────────────────────────────── */
+
+.theme-selector {
+    position: relative;
+}
+
+.theme-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 7px 11px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.theme-button:hover {
+    border-color: var(--color-primary);
+    transform: scale(1.03);
+}
+
+.theme-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    padding: 8px;
+    min-width: 180px;
+    z-index: 1000;
+}
+
+.theme-menu.hidden {
+    display: none;
+}
+
+.theme-section-title {
+    font-size: 0.7em;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    padding: 6px 8px 4px;
+    letter-spacing: 0.05em;
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 0.88em;
+    transition: background 0.15s ease;
+}
+
+.theme-option:hover {
+    background: var(--bg-tertiary);
+}
+
+.theme-icon {
+    font-size: 1.1em;
+}
+
+.theme-divider {
+    margin: 6px 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+}
+
+.color-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    padding: 4px;
+}
+
+.color-option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.15s ease;
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+}
+
+.color-option.active {
+    border-color: var(--text-primary);
+}
+
+.color-preview {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+/* Colores de previsualización de cada esquema (clases .scheme-* en index.html) */
+.scheme-blue   { --preview-light: #dbeafe; --preview-main: #2563eb; }
+.scheme-green  { --preview-light: #dcfce7; --preview-main: #16a34a; }
+.scheme-purple { --preview-light: #f3e8ff; --preview-main: #9333ea; }
+.scheme-orange { --preview-light: #ffedd5; --preview-main: #ea580c; }
+.scheme-red    { --preview-light: #fee2e2; --preview-main: #dc2626; }
+.color-preview:first-child { background: var(--preview-light); }
+.color-preview:last-child  { background: var(--preview-main); }
+
+/* ── 4. Componentes compartidos ────────────────────────────────────────────── */
+
+/* Controles y filtros */
+
+.controls-and-filters {
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.controls-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-download {
+    position: relative;        /* ancla del input[type=file] oculto */
+    padding: 8px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.88em;
+    background: var(--color-primary);
+    color: white;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-download:hover {
+    background: var(--color-primary-hover);
+}
+
+.btn-download:active {
+    transform: translateY(1px);
+}
+
+.btn-download:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* El input[type=file] está oculto (1×1 px): el anillo de foco se dibuja en el
+   botón entero, y solo cuando se llega con teclado (no al hacer clic). */
+.btn-download:has(input:focus-visible) {
+    outline: 2px solid var(--focus-color);
+    outline-offset: 2px;
+}
+.btn-download input:focus-visible { outline: none; }
+
+.file-status {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+
+.file-status.loaded {
+    color: var(--accent-text);
+    font-weight: 600;
+}
+
+.filter-btn, .fantasy-team-selector, .chart-selector {
+    padding: 7px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.85em;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.filter-btn:hover, .fantasy-team-selector:hover {
+    border-color: var(--color-primary);
+}
+
+.filter-btn.active, .filter-btn[aria-pressed="true"] {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.search-input {
+    padding: 8px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 0.88em;
+    min-width: 200px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
+}
+
+/* ── Tablas ────────────────────────────────────────────────────────────────── */
+
+h2 {
+    color: var(--text-primary);
+    font-size: 1.15em;
+    font-weight: 700;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+/* La tabla se desplaza dentro de su contenedor (en vertical y en horizontal). Con altura
+   máxima, la barra de scroll horizontal queda siempre a la vista (antes se usaba un giro
+   de 180° para ponerla arriba) y la cabecera puede quedarse fija mientras se baja. */
+.table-wrapper {
+    overflow: auto;
+    max-height: min(72vh, 900px);
+    margin-top: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+}
+
+.player-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+    font-size: 0.86em;
+}
+
+.player-table th, .player-table td {
+    padding: 10px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Cifras de ancho fijo: los decimales quedan alineados en columnas numéricas */
+.player-table td { font-variant-numeric: tabular-nums; }
+
+.player-table th {
+    position: sticky;              /* cabecera fija al desplazarse dentro de .table-wrapper */
+    top: 0;
+    z-index: 2;
+    /* Con border-collapse el borde no acompaña a una celda fija: la línea inferior se dibuja con sombra */
+    box-shadow: inset 0 -1px 0 var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.78em;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    user-select: none;
+}
+
+.player-table th:hover {
+    color: var(--text-primary);
+}
+
+/* Cabeceras sin ordenación (liga.js pone onclick solo en las ordenables) */
+.player-table th:not([onclick]) { cursor: default; }
+
+/* Foco de teclado dentro de zonas con scroll/overflow: hacia dentro, para que no se recorte */
+.player-table th:focus-visible,
+.module-tab:focus-visible,
+.lang-option:focus-visible,
+.theme-option:focus-visible,
+.color-option:focus-visible { outline-offset: -2px; }
+
+/* Opciones de menú enfocadas con teclado: mismo fondo que al pasar el ratón */
+.lang-option:focus-visible,
+.theme-option:focus-visible,
+.color-option:focus-visible { background: var(--bg-tertiary); }
+
+.player-table tr:last-child td {
+    border-bottom: none;
+}
+
+.player-table tr:nth-child(even) {
+    background: var(--bg-row-even);
+}
+
+.player-table tr:hover {
+    background: color-mix(in srgb, var(--color-primary) 6%, transparent);
+}
+
+/* ── Gráficos ──────────────────────────────────────────────────────────────── */
+
+.chart-container {
+    margin-top: 16px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    height: 420px;
+    position: relative;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.chart-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.chart-tab {
+    padding: 6px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+.chart-tab:hover {
+    color: var(--text-primary);
+    border-color: var(--color-primary);
+}
+
+.chart-tab.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.chart-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-clear-chart {
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.15s ease;
+}
+
+.btn-clear-chart:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* ── Indicadores de Tendencia ─────────────────────────────────────────────── */
+
+.trend-indicator {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-left: 4px;
+    display: inline-block;
+}
+
+.trend-up    { color: #16a34a; }
+.trend-down  { color: #dc2626; }
+.trend-stable { color: #64748b; }
+
+/* ── Pie de página / Créditos ─────────────────────────────────────────────── */
+
+.credit-text-main {
+    text-align: right;
+    font-size: 0.78em;
+    color: var(--text-secondary);
+    margin-top: 28px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+}
+
+.app-version {
+    margin-left: 8px;
+    padding: 2px 6px;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary);
+    color: white;
+    font-weight: 600;
+    font-size: 0.85em;
+}
+
+/* ── 5. Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .header-wrapper {
+        padding: 12px 16px;
+        gap: 10px;
+    }
+    header h1 {
+        font-size: 1.15em;
+        min-width: 0;              /* permite acortar el título en pantallas estrechas */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .header-controls {
+        flex-shrink: 0;
+    }
+    .module-nav-inner {
+        padding: 0 8px;
+    }
+    .module-container {
+        padding: 16px;
+        margin-top: 16px;
+    }
+    .controls-and-filters {
+        padding: 12px;
+    }
+    .controls-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-input,
+    .fantasy-team-selector,
+    .btn-download {
+        width: 100%;
+    }
+}
+
+
+/* Texto auxiliar y variantes (antes eran style="…" en index.html) */
+.hint-text { margin: 0 0 10px; font-size: 0.9em; color: var(--text-secondary); }
+.chart-controls--flush { margin-bottom: 0; }
+
+
+/* ============================================================================
+   6. MÓDULO JUGADORES   (#module-jugadores · modules/jugadores/jugadores.js)
+   ============================================================================ */
+
+/* 14 columnas: relleno horizontal más ajustado que el resto de tablas para que
+   quepan todas (incluida "Hoy") en pantallas de 1280 px sin scroll horizontal. */
+#module-jugadores .player-table th,
+#module-jugadores .player-table td { padding-left: 8px; padding-right: 8px; }
+
+.col-check { width: 36px; text-align: center; }
+.col-check input { cursor: pointer; }
+
+/* Columnas numéricas (desde la 6ª) a la derecha; "Rank" (6ª) centrada y estrecha */
+#module-jugadores .player-table th:nth-child(n+6),
+#module-jugadores .player-table td:nth-child(n+6) { white-space: nowrap; text-align: right; }
+#module-jugadores .player-table th:nth-child(6),
+#module-jugadores .player-table td:nth-child(6) { width: 56px; min-width: 56px; text-align: center; }
+
+/* Nombre, equipo NBA y equipo fantasy: texto a la izquierda */
+#module-jugadores .player-table th:nth-child(-n+4),
+#module-jugadores .player-table td:nth-child(-n+4) { text-align: left; }
+#module-jugadores .player-table th.col-check,
+#module-jugadores .player-table td:first-child { text-align: center; }
+
+/* Enlace ESPN junto al nombre */
+.espn-link { margin-left: 6px; font-size: 0.85em; text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
+.espn-link:hover { opacity: 1; }
+
+/* Celdas creadas desde liga.js (antes llevaban style="…" en línea) */
+.icon-cell { display: flex; align-items: center; }
+.icon-cell img { width: 24px; height: 24px; object-fit: contain; margin-right: 8px; border-radius: 3px; }
+.name-cell { display: flex; align-items: center; gap: 4px; }
+
+/* Tendencia y "Hoy": centradas y en negrita. El color lo pone liga.js según el dato. */
+#module-jugadores .player-table td.cell-status { text-align: center; font-weight: 600; cursor: default; white-space: nowrap; }
+
+
+/* ============================================================================
+   7. MÓDULO HISTÓRICO NBA   (#module-historico · modules/historico/historico.js)
+   ============================================================================ */
+
+/* Selector "Desde" (historico.js le pone display:flex al mostrarlo) */
+.hist-desde { align-items: center; gap: 6px; font-size: 0.9em; color: var(--text-secondary); }
+
+#histTable { table-layout: fixed; min-width: unset; width: 100%; }
+#histTable th, #histTable td { white-space: nowrap; }
+
+#histTable th:nth-child(1) { width: 36px; }    /* checkbox */
+#histTable th:nth-child(2) { width: 220px; }   /* jugador */
+#histTable th:nth-child(n+3) { width: 80px; }  /* columnas de datos */
+
+/* Cabeceras ordenables: todas menos el checkbox */
+#histTable th:nth-child(n+2) { cursor: pointer; }
+
+/* Nombre a la izquierda; cifras y su cabecera a la derecha */
+#histTable th:nth-child(2), #histTable td:nth-child(2) { text-align: left; }
+#histTable th:nth-child(n+3), #histTable td:nth-child(n+3) { text-align: right; }
+
+/* Año sin dato: apagado (historico.js añade la clase) */
+#histTable td.is-empty { color: var(--text-secondary); }
+
+
+/* ============================================================================
+   8. MÓDULO ENTRENADORES   (#module-entrenadores · modules/entrenadores/entrenadores.js)
+   ============================================================================ */
+
+#module-entrenadores .player-table th.col-check,
+#module-entrenadores .player-table td:first-child {
+    text-align: center;
+}
+
+#module-entrenadores .player-table th:nth-child(2),
+#module-entrenadores .player-table td:nth-child(2) {
+    width: 64px;
+    min-width: 64px;
+    text-align: center;
+}
+
+/* Equipo Fantasy y Entrenador: texto a la izquierda */
+#module-entrenadores .player-table th:nth-child(3),
+#module-entrenadores .player-table td:nth-child(3),
+#module-entrenadores .player-table th:nth-child(4),
+#module-entrenadores .player-table td:nth-child(4) {
+    text-align: left;
+}
+
+/* Columnas numéricas (desde la 5ª) alineadas a la derecha */
+#module-entrenadores .player-table th:nth-child(n+5),
+#module-entrenadores .player-table td:nth-child(n+5) {
+    white-space: nowrap;
+    text-align: right;
+}

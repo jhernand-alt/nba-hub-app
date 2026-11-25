@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Fantasy Hub</title>
+
+    <script src="lang/es.js"></script>
+    <script src="lang/eu.js"></script>
+    <script src="lang/en.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Chart.js 3.7.1 en local (assets/vendor): funciona sin internet -->
+    <script src="assets/vendor/chart.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="header-wrapper">
+            <h1 id="appTitle" data-lang-key="app_title">NBA Fantasy Hub</h1>
+            <div class="header-controls">
+
+                <!-- Selector de idioma -->
+                <div class="language-selector" id="languageSelectorWrapper">
+                    <button id="langButton" class="lang-button" onclick="toggleLangMenu()" aria-haspopup="true" aria-expanded="false" data-lang-key-aria="lang_btn_label">
+                        <span id="langButtonContent" class="lang-option-inner">
+                            <svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg>
+                            <span class="lang-code">ES</span>
+                        </span>
+                        <span class="lang-chevron">▾</span>
+                    </button>
+                    <div id="langMenu" class="lang-menu hidden" role="menu">
+                        <div class="lang-option" role="menuitemradio" aria-checked="false" tabindex="-1" onclick="setLanguage('es'); toggleLangMenu()" data-lang="es">
+                            <span class="lang-option-inner"><svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#AA151B"/><rect y="10" width="60" height="20" fill="#F1BF00"/></svg><span class="lang-code">ES</span></span>
+                            <span class="lang-name">Español</span>
+                        </div>
+                        <div class="lang-option" role="menuitemradio" aria-checked="false" tabindex="-1" onclick="setLanguage('eu'); toggleLangMenu()" data-lang="eu">
+                            <span class="lang-option-inner"><svg class="flag-svg" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#D8202C"/><line x1="0" y1="0" x2="60" y2="40" stroke="#007A3D" stroke-width="10"/><line x1="60" y1="0" x2="0" y2="40" stroke="#007A3D" stroke-width="10"/><rect x="25" y="0" width="10" height="40" fill="white"/><rect x="0" y="15" width="60" height="10" fill="white"/></svg><span class="lang-code">EU</span></span>
+                            <span class="lang-name">Euskera</span>
+                        </div>
+                        <div class="lang-option" role="menuitemradio" aria-checked="false" tabindex="-1" onclick="setLanguage('en'); toggleLangMenu()" data-lang="en">
+                            <span class="lang-option-inner"><svg class="flag-svg" width="28" height="19" viewBox="0 0 60 40" xmlns="http://www.w3.org/2000/svg"><rect width="60" height="40" fill="#012169"/><line x1="0" y1="0" x2="60" y2="40" stroke="white" stroke-width="8"/><line x1="60" y1="0" x2="0" y2="40" stroke="white" stroke-width="8"/><line x1="0" y1="0" x2="60" y2="40" stroke="#C8102E" stroke-width="4.5"/><line x1="60" y1="0" x2="0" y2="40" stroke="#C8102E" stroke-width="4.5"/><rect x="24" y="0" width="12" height="40" fill="white"/><rect x="0" y="14" width="60" height="12" fill="white"/><rect x="26" y="0" width="8" height="40" fill="#C8102E"/><rect x="0" y="16" width="60" height="8" fill="#C8102E"/></svg><span class="lang-code">EN</span></span>
+                            <span class="lang-name">English</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selector de tema -->
+                <div class="theme-selector">
+                    <button id="themeButton" class="theme-button" onclick="toggleThemeMenu()" aria-haspopup="true" aria-expanded="false" data-lang-key-aria="theme_btn_label">🎨</button>
+                    <div id="themeMenu" class="theme-menu hidden" role="menu">
+                        <div class="theme-section-title" data-lang-key="theme_section_mode">Modo</div>
+                        <div class="theme-option" role="menuitem" tabindex="-1" onclick="changeTheme('auto')"><span class="theme-icon">💡</span><span data-lang-key="theme_auto">Auto</span></div>
+                        <div class="theme-option" role="menuitem" tabindex="-1" onclick="changeTheme('light')"><span class="theme-icon">☀️</span><span data-lang-key="theme_light">Claro</span></div>
+                        <div class="theme-option" role="menuitem" tabindex="-1" onclick="changeTheme('dark')"><span class="theme-icon">🌙</span><span data-lang-key="theme_dark">Oscuro</span></div>
+                        <hr class="theme-divider">
+                        <div class="theme-section-title" data-lang-key="theme_section_color">Color</div>
+                        <div class="color-grid">
+                            <div class="color-option scheme-blue" role="menuitemradio" aria-checked="false" tabindex="-1" onclick="changeColorScheme('blue')"   title="Azul" data-lang-key-title="color_blue" data-lang-key-aria="color_blue"><span class="color-preview"></span><span class="color-preview"></span></div>
+                            <div class="color-option scheme-green" role="menuitemradio" aria-checked="false" tabindex="-1" onclick="changeColorScheme('green')"  title="Verde" data-lang-key-title="color_green" data-lang-key-aria="color_green"><span class="color-preview"></span><span class="color-preview"></span></div>
+                            <div class="color-option scheme-purple" role="menuitemradio" aria-checked="false" tabindex="-1" onclick="changeColorScheme('purple')" title="Púrpura" data-lang-key-title="color_purple" data-lang-key-aria="color_purple"><span class="color-preview"></span><span class="color-preview"></span></div>
+                            <div class="color-option scheme-orange" role="menuitemradio" aria-checked="false" tabindex="-1" onclick="changeColorScheme('orange')" title="Naranja" data-lang-key-title="color_orange" data-lang-key-aria="color_orange"><span class="color-preview"></span><span class="color-preview"></span></div>
+                            <div class="color-option scheme-red" role="menuitemradio" aria-checked="false" tabindex="-1" onclick="changeColorScheme('red')"    title="Rojo" data-lang-key-title="color_red" data-lang-key-aria="color_red"><span class="color-preview"></span><span class="color-preview"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Navegación entre módulos -->
+        <nav class="module-nav" role="navigation">
+            <div class="module-nav-inner" role="tablist">
+                <button class="module-tab active" id="tab-jugadores" role="tab" aria-selected="true" aria-controls="module-jugadores"
+                        onclick="switchModule('jugadores')"
+                        data-lang-key="nav_jugadores">
+                    🏀 Jugadores
+                </button>
+                <button class="module-tab" id="tab-entrenadores" role="tab" aria-selected="false" aria-controls="module-entrenadores" tabindex="-1"
+                        onclick="switchModule('entrenadores')"
+                        data-lang-key="nav_entrenadores">
+                    👔 Entrenadores
+                </button>
+                <button class="module-tab" id="tab-historico" role="tab" aria-selected="false" aria-controls="module-historico" tabindex="-1"
+                        onclick="switchModule('historico')"
+                        data-lang-key="nav_historico">
+                    📈 Histórico NBA
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ── Módulo 1: Jugadores ───────────────────────────────────────────── -->
+    <div id="module-jugadores" class="module-container" role="tabpanel" aria-labelledby="tab-jugadores">
+        <h2 class="module-title" data-lang-key="jugadores_title">Liga Fantasy NBA &quot;GO LAKERS!!!&quot; — Jugadores</h2>
+
+        <div class="controls-and-filters" role="region">
+            <div id="fileControls" class="controls-row">
+                <label for="csvPlayers" class="btn-download">
+                    <span data-lang-key="btn_load_players">Identificadores CSV ⬆️</span>
+                    <input type="file" id="csvPlayers" accept=".csv" class="visually-hidden">
+                </label>
+                <span id="playersFileStatus" class="file-status"></span>
+                <label for="csvStats" class="btn-download">
+                    <span data-lang-key="btn_load_stats">Estadísticas CSV ⬆️</span>
+                    <input type="file" id="csvStats" accept=".csv" class="visually-hidden">
+                </label>
+                <span id="statsFileStatus" class="file-status"></span>
+            </div>
+            <div id="filterControls" class="controls-row">
+                <input type="text" id="searchInput"
+                       data-lang-key-placeholder="search_placeholder"
+                       placeholder="Buscar..."
+                       oninput="Jugadores.filterBySearch(this.value)"
+                       class="search-input">
+                <select id="nbaTeamSelector" class="fantasy-team-selector" onchange="Jugadores.filterPlayersByNBATeam(this.value)" disabled>
+                    <option value="all" data-lang-key="filter_all_nba">TODOS LOS EQUIPOS NBA</option>
+                </select>
+                <select id="fantasyTeamSelector" class="fantasy-team-selector" onchange="Jugadores.filterPlayersByFantasyTeam(this.value)" disabled>
+                    <option value="all" data-lang-key="filter_all_fantasy">TODOS LOS EQUIPOS FANTASY</option>
+                </select>
+                <div id="positionFilters" role="group">
+                    <button onclick="Jugadores.filterPlayersByPosition('all', this)" class="filter-btn active" aria-pressed="true"  data-lang-key="filter_all_pos">TODOS</button>
+                    <button onclick="Jugadores.filterPlayersByPosition('PG', this)"  class="filter-btn" aria-pressed="false">PG</button>
+                    <button onclick="Jugadores.filterPlayersByPosition('SG', this)"  class="filter-btn" aria-pressed="false">SG</button>
+                    <button onclick="Jugadores.filterPlayersByPosition('SF', this)"  class="filter-btn" aria-pressed="false">SF</button>
+                    <button onclick="Jugadores.filterPlayersByPosition('PF', this)"  class="filter-btn" aria-pressed="false">PF</button>
+                    <button onclick="Jugadores.filterPlayersByPosition('C', this)"   class="filter-btn" aria-pressed="false">C</button>
+                    <button onclick="Jugadores.filterPlayersByPosition('G', this)"   class="filter-btn" aria-pressed="false">G</button>
+                    <button onclick="Jugadores.filterPlayersByPosition('F', this)"   class="filter-btn" aria-pressed="false">F</button>
+                </div>
+            </div>
+        </div>
+
+        <section aria-labelledby="jugadoresTablaHeader">
+            <h2 id="jugadoresTablaHeader" data-lang-key="section_table_title">Estadísticas por Jugador</h2>
+            <div class="table-wrapper" role="region" tabindex="0" aria-labelledby="jugadoresTablaHeader">
+                <table class="player-table">
+                    <thead id="playerTableHeader">
+                        <tr>
+                            <th class="col-check"><input type="checkbox" id="checkAll" title="Seleccionar todos" data-lang-key-title="select_all" data-lang-key-aria="select_all"></th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('name', this)"         class="sortable" data-lang-key="col_name">Nombre ⇅</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('team', this)"         class="sortable" data-lang-key="col_nba_team">Equipo NBA ⇅</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('fantasyTeam', this)"  class="sortable" data-lang-key="col_fantasy_team">Equipo Fantasy ⇅</th>
+                            <th data-lang-key="col_position">Pos.</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('rankPos', this)"      class="sortable" data-lang-key="col_rank_pos">Rank ⇅</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('ptsTotal', this)"     class="sortable" data-lang-key="col_pts_total">Pts Total ⇅</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('ptsAvg', this)"       class="sortable" data-lang-key="col_pts_avg">Pts Avg ⇅</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('partidos', this)"     class="sortable" data-lang-key="col_gp">PJ ⇅</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('rankSemana', this)"   class="sortable" data-lang-key="col_pts_week">Sem ⇅</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('rank2Semanas', this)" class="sortable" data-lang-key="col_pts_2weeks">2 Sem ⇅</th>
+                            <th tabindex="0" onclick="Jugadores.sortTable('rankMes', this)"      class="sortable" data-lang-key="col_pts_month">Mes ⇅</th>
+                            <th data-lang-key="col_trend">Tend.</th>
+                            <th data-lang-key="col_today">Hoy</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playerTableBody">
+                        <tr><td colspan="14" data-lang-key="table_empty_initial">Cargue los archivos CSV para ver los datos.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section aria-labelledby="jugadoresGraficosHeader">
+            <h2 id="jugadoresGraficosHeader" data-lang-key="section_charts_title">Gráficos</h2>
+            <div class="chart-controls">
+                <div class="chart-tabs">
+                    <button class="chart-tab active" onclick="Jugadores.switchChart('topTotal', this)"   data-lang-key="tab_top_total">Top Pts Total</button>
+                    <button class="chart-tab"        onclick="Jugadores.switchChart('topAvg', this)"     data-lang-key="tab_top_avg">Top Pts Avg</button>
+                    <button class="chart-tab"        onclick="Jugadores.switchChart('byNBATotal', this)" data-lang-key="tab_by_nba_total">Por Equipo NBA (Total)</button>
+                    <button class="chart-tab"        onclick="Jugadores.switchChart('byNBAAvg', this)"   data-lang-key="tab_by_nba_avg">Por Equipo NBA (Avg)</button>
+                    <button class="chart-tab"        onclick="Jugadores.switchChart('compare', this)"    data-lang-key="tab_compare">Comparar selección</button>
+                </div>
+                <div class="chart-options">
+                    <select id="chartLimitSelector" class="chart-selector" onchange="Jugadores.updateCurrentChart()">
+                        <option value="4"  selected data-lang-key="chart_top4">Top 4</option>
+                        <option value="8"           data-lang-key="chart_top8">Top 8</option>
+                        <option value="16"          data-lang-key="chart_top16">Top 16</option>
+                    </select>
+                    <button onclick="Jugadores.clearChartBtn()" class="btn-clear-chart" data-lang-key="btn_clear_chart">Borrar ✕</button>
+                    <button id="downloadChart" class="btn-download" onclick="Jugadores.downloadChartImage()" disabled>
+                        <span data-lang-key="btn_download_chart">Descargar 🖼️</span>
+                    </button>
+                </div>
+            </div>
+            <figure class="chart-container">
+                <canvas id="jugadoresPointsChart"></canvas>
+            </figure>
+        </section>
+
+        <div class="credit-text-main">
+            <span data-lang-key="credit_author">Hecho por Julián Hernández. Datos actualizados el</span>
+            <span id="jugadoresDatePlaceholder"></span>
+            <span class="app-version">v3.3.0</span>
+        </div>
+
+    </div>
+
+    <!-- ── Módulo 2: Entrenadores ────────────────────────────────────────── -->
+    <div id="module-entrenadores" class="module-container" role="tabpanel" aria-labelledby="tab-entrenadores" style="display:none;">
+        <h2 class="module-title" data-lang-key="entrenadores_title">Liga Fantasy NBA &quot;GO LAKERS!!!&quot; — Entrenadores</h2>
+
+        <div class="controls-and-filters" role="region">
+            <div id="entFileControls" class="controls-row">
+                <label for="csvEntrenadoresIds" class="btn-download">
+                    <span data-lang-key="btn_load_players">Identificadores CSV ⬆️</span>
+                    <input type="file" id="csvEntrenadoresIds" accept=".csv" class="visually-hidden">
+                </label>
+                <span id="entIdsFileStatus" class="file-status"></span>
+                <label for="csvEntrenadoresStats" class="btn-download">
+                    <span data-lang-key="btn_load_stats">Estadísticas CSV ⬆️</span>
+                    <input type="file" id="csvEntrenadoresStats" accept=".csv" class="visually-hidden">
+                </label>
+                <span id="entStatsFileStatus" class="file-status"></span>
+            </div>
+        </div>
+
+        <section aria-labelledby="entTablaHeader">
+            <h2 id="entTablaHeader" data-lang-key="ent_section_table">Clasificación de Entrenadores</h2>
+            <div class="table-wrapper" role="region" tabindex="0" aria-labelledby="entTablaHeader">
+                <table class="player-table" id="entTable">
+                    <thead id="entTableHeader">
+                        <tr>
+                            <th class="col-check"><input type="checkbox" id="entCheckAll" title="Seleccionar todos" data-lang-key-title="select_all" data-lang-key-aria="select_all"></th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('rankTotal', this)"   class="sortable" data-lang-key="col_rank_total">Rank ⇅</th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('fantasyTeam', this)" class="sortable" data-lang-key="col_fantasy_team">Equipo Fantasy ⇅</th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('managerName', this)" class="sortable" data-lang-key="col_manager">Entrenador ⇅</th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('ptsTotal', this)"    class="sortable" data-lang-key="col_pts_total">Pts Total ⇅</th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('ptsAvg', this)"      class="sortable" data-lang-key="col_pts_avg">Pts Avg ⇅</th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('partidos', this)"    class="sortable" data-lang-key="col_gp">PJ ⇅</th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('ptsSemana', this)"   class="sortable" data-lang-key="col_pts_week">Sem ⇅</th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('pts2Semanas', this)" class="sortable" data-lang-key="col_pts_2weeks">2 Sem ⇅</th>
+                            <th tabindex="0" onclick="Entrenadores.sortTable('ptsMes', this)"      class="sortable" data-lang-key="col_pts_month">Mes ⇅</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entTableBody">
+                        <tr><td colspan="10" data-lang-key="table_empty_initial">Cargue los archivos CSV para ver los datos.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section aria-labelledby="entGraficosHeader">
+            <h2 id="entGraficosHeader" data-lang-key="section_charts_title">Gráficos</h2>
+            <div class="chart-controls">
+                <div class="chart-tabs">
+                    <button class="chart-tab active" onclick="Entrenadores.switchChart('total', this)"      data-lang-key="ent_tab_total">Pts Total</button>
+                    <button class="chart-tab"        onclick="Entrenadores.switchChart('avg', this)"        data-lang-key="ent_tab_avg">Pts Avg</button>
+                    <button class="chart-tab"        onclick="Entrenadores.switchChart('periods', this)"    data-lang-key="ent_tab_periods">Últimos Períodos</button>
+                    <button class="chart-tab"        onclick="Entrenadores.switchChart('efficiency', this)" data-lang-key="ent_tab_efficiency">Volumen vs. Promedio</button>
+                    <button class="chart-tab"        onclick="Entrenadores.switchChart('compare', this)"    data-lang-key="tab_compare">Comparar selección</button>
+                </div>
+                <div class="chart-options">
+                    <button onclick="Entrenadores.clearChartBtn()" class="btn-clear-chart" data-lang-key="btn_clear_chart">Borrar ✕</button>
+                    <button id="entDownloadChart" class="btn-download" onclick="Entrenadores.downloadChartImage()" disabled>
+                        <span data-lang-key="btn_download_chart">Descargar 🖼️</span>
+                    </button>
+                </div>
+            </div>
+            <figure class="chart-container">
+                <canvas id="entrenadoresPointsChart"></canvas>
+            </figure>
+        </section>
+
+        <div class="credit-text-main">
+            <span data-lang-key="credit_author">Hecho por Julián Hernández. Datos actualizados el</span>
+            <span id="entDatePlaceholder"></span>
+            <span class="app-version">v1.0.0</span>
+        </div>
+
+    </div>
+
+    <!-- ── Módulo 3: Histórico NBA ───────────────────────────────────────── -->
+    <div id="module-historico" class="module-container" role="tabpanel" aria-labelledby="tab-historico" style="display:none;">
+
+        <div class="controls-and-filters" role="region">
+            <div class="controls-row">
+                <label for="csvHistorico" class="btn-download">
+                    <span data-lang-key="hist_btn_load">Cargar CSV Histórico ⬆️</span>
+                    <input type="file" id="csvHistorico" accept=".csv" class="visually-hidden">
+                </label>
+                <span id="historicoFileStatus" class="file-status"></span>
+            </div>
+            <div class="controls-row" id="histFilterRow" style="display:none;">
+                <label id="histDesdeLabel" class="hist-desde" style="display:none;">
+                    <span data-lang-key="hist_desde">Desde:</span>
+                    <select id="histDesdeSelector" class="chart-selector"></select>
+                </label>
+                <input type="text" id="histSearchInput"
+                       data-lang-key-placeholder="search_placeholder"
+                       placeholder="Buscar jugador..."
+                       oninput="Historico.filterBySearch(this.value)"
+                       class="search-input">
+                <span id="histPlayerCount" class="file-status"></span>
+            </div>
+        </div>
+
+        <!-- Selector de métrica -->
+        <div id="histMetricSelector" class="chart-controls chart-controls--flush" style="display:none;">
+            <div class="chart-tabs">
+                <button class="chart-tab hist-metric-btn active" onclick="Historico.switchMetrica('PTSTOT', this)" data-lang-key="hist_metric_total">Puntos Totales</button>
+                <button class="chart-tab hist-metric-btn"        onclick="Historico.switchMetrica('PJ', this)"     data-lang-key="hist_metric_pj">Partidos Jugados</button>
+                <button class="chart-tab hist-metric-btn"        onclick="Historico.switchMetrica('PTSAVG', this)" data-lang-key="hist_metric_avg">Promedio</button>
+            </div>
+        </div>
+
+        <section aria-labelledby="histTablaHeader" id="histTableSection" style="display:none;">
+            <h2 id="histTablaHeader" data-lang-key="hist_section_table">Histórico por Jugador</h2>
+            <div class="table-wrapper" role="region" tabindex="0" aria-labelledby="histTablaHeader">
+                <table class="player-table" id="histTable">
+                    <thead id="histTableHeader"><tr></tr></thead>
+                    <tbody id="histTableBody">
+                        <tr><td data-lang-key="table_empty_initial">Cargue el CSV histórico para ver los datos.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section aria-labelledby="histChartHeader" id="histChartSection" style="display:none;">
+            <h2 id="histChartHeader" data-lang-key="hist_section_charts">Comparar Jugadores</h2>
+            <div class="controls-and-filters">
+                <p class="hint-text" data-lang-key="hist_select_hint">
+                    Selecciona jugadores en la tabla (checkbox) para compararlos en las gráficas.
+                </p>
+                <div class="controls-row">
+                    <button class="btn-download" onclick="Historico.addSelectedToChart()" data-lang-key="hist_btn_add_chart">
+                        Añadir selección al gráfico ↓
+                    </button>
+                    <button class="btn-clear-chart" onclick="Historico.clearChartSelection()" data-lang-key="hist_btn_clear_selection">
+                        Limpiar selección ✕
+                    </button>
+                    <span id="histSelectedCount" class="file-status"></span>
+                </div>
+            </div>
+            <div class="chart-controls">
+                <div class="chart-tabs">
+                    <button class="chart-tab active" id="histTabTotal" onclick="Historico.switchChart('total', this)" data-lang-key="hist_tab_total">Puntos Totales</button>
+                    <button class="chart-tab"         id="histTabAvg"   onclick="Historico.switchChart('avg', this)"   data-lang-key="hist_tab_avg">Promedio por Partido</button>
+                </div>
+                <div class="chart-options">
+                    <button id="histDownloadChart" class="btn-download" onclick="Historico.downloadChart()" disabled data-lang-key="btn_download_chart">
+                        Descargar 🖼️
+                    </button>
+                </div>
+            </div>
+            <figure class="chart-container">
+                <canvas id="histChart"></canvas>
+            </figure>
+        </section>
+
+        <div class="credit-text-main" id="histCredit" style="display:none;">
+            <span data-lang-key="hist_credit">Datos: nba_fantasy_historico.csv generado con nba_resumen.py + nba_fusionar.py</span>
+            <span class="app-version">v1.0.0</span>
+        </div>
+
+    </div>
+
+    <!-- JS: compartido primero, luego módulos -->
+    <script src="core.js"></script>
+    <script src="modules/jugadores/jugadores.js"></script>
+    <script src="modules/entrenadores/entrenadores.js"></script>
+    <script src="modules/historico/historico.js"></script>
+
+</body>
+</html>
