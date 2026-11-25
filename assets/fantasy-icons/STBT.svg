@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="512" height="512">
+  <defs>
+    <!-- Degradado metálico dorado para la estrella -->
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE066" />
+      <stop offset="50%" stop-color="#F5B700" />
+      <stop offset="100%" stop-color="#C98A00" />
+    </linearGradient>
+
+    <!-- Degradado para el balón -->
+    <linearGradient id="ball-grad" x1="20%" y1="10%" x2="80%" y2="90%">
+      <stop offset="0%" stop-color="#FF7B29" />
+      <stop offset="100%" stop-color="#D94E00" />
+    </linearGradient>
+
+    <!-- Recorte circular del balón -->
+    <clipPath id="ball-mask">
+      <circle cx="120" cy="112" r="76" />
+    </clipPath>
+  </defs>
+
+  <!-- Aro exterior azul marino oscuro para dar unidad al emblema -->
+  <circle cx="120" cy="120" r="112" fill="#0F172A" stroke="#F5B700" stroke-width="5" />
+  <circle cx="120" cy="120" r="102" fill="none" stroke="#1E293B" stroke-width="2" />
+
+  <!-- Balón de baloncesto centrado ligeramente arriba -->
+  <circle cx="120" cy="112" r="76" fill="url(#ball-grad)" />
+
+  <!-- Líneas del balón -->
+  <g clip-path="url(#ball-mask)" stroke="#0F172A" stroke-width="4.5" fill="none">
+    <line x1="44" y1="112" x2="196" y2="112" />
+    <line x1="120" y1="36" x2="120" y2="188" />
+    <path d="M 65,55 Q 108,112 65,169" />
+    <path d="M 175,55 Q 132,112 175,169" />
+  </g>
+  <circle cx="120" cy="112" r="76" fill="none" stroke="#0F172A" stroke-width="5" />
+
+  <!-- Estrella clásica de 5 puntas dorada atravesando el balón -->
+  <polygon points="120,24 139,80 198,80 150,114 168,170 120,136 72,170 90,114 42,80 101,80" fill="url(#gold-grad)" stroke="#0F172A" stroke-width="5" stroke-linejoin="round" />
+
+  <!-- Brillo interior sutil en la estrella -->
+  <polygon points="120,38 134,84 182,84 143,111 157,156 120,129 120,38" fill="#FFFFFF" opacity="0.22" />
+
+  <!-- Cartela inferior angular para el nombre -->
+  <polygon points="26,162 214,162 198,202 42,202" fill="#0F172A" stroke="#F5B700" stroke-width="4" stroke-linejoin="round" />
+
+  <!-- Palabra STEAUA con tipografía deportiva -->
+  <text x="120" y="191" font-family="&#39;Arial Black&#39;, Impact, sans-serif" font-weight="900" font-size="29" fill="#FFFFFF" text-anchor="middle" letter-spacing="3.5">
+    STEAUA
+  </text>
+</svg>
